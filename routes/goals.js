@@ -6,22 +6,30 @@ let goals = [
 ];
 
 router.get('/getGoals', (req, res) => {
-    res.json(goals);
+    res.status(200).json(goals);
 });
 
 router.post('/addGoal', (req, res) => {
-    const newGoal = { 
-        id: Date.now(), 
-        ...req.body 
-    };
+    const { name, description, dueDate } = req.body;
+
+    if (!name || !description || !dueDate) {
+        return res.status(400).json({ message: "Error: Faltan parámetros (name, description o dueDate)" });
+    }
+
+    const newGoal = { id: Date.now(), name, description, dueDate };
     goals.push(newGoal);
-    res.status(201).json(newGoal);
+    res.status(200).json(newGoal);
 });
 
 router.delete('/removeGoal', (req, res) => {
     const { id } = req.body;
+
+    if (!id) {
+        return res.status(400).json({ message: "Error: Se requiere el ID para eliminar la meta" });
+    }
+
     goals = goals.filter(g => g.id !== id);
-    res.json({ message: "Elemento eliminado correctamente" });
+    res.status(200).json({ message: "Elemento eliminado correctamente" });
 });
 
 export default router;

@@ -6,22 +6,30 @@ let tasks = [
 ];
 
 router.get('/getTasks', (req, res) => {
-    res.json(tasks);
+    res.status(200).json(tasks);
 });
 
 router.post('/addTask', (req, res) => {
-    const newTask = { 
-        id: Date.now(), 
-        ...req.body 
-    };
+    const { name, description, dueDate } = req.body;
+
+    if (!name || !description || !dueDate) {
+        return res.status(400).json({ message: "Error: Faltan parámetros (name, description o dueDate)" });
+    }
+
+    const newTask = { id: Date.now(), name, description, dueDate };
     tasks.push(newTask);
-    res.status(201).json(newTask);
+    res.status(200).json(newTask); 
 });
 
 router.delete('/removeTask', (req, res) => {
     const { id } = req.body;
+
+    if (!id) {
+        return res.status(400).json({ message: "Error: Se requiere el ID para eliminar la tarea" });
+    }
+
     tasks = tasks.filter(t => t.id !== id);
-    res.json({ message: "Elemento eliminado correctamente" });
+    res.status(200).json({ message: "Elemento eliminado correctamente" });
 });
 
 export default router;

@@ -1,35 +1,47 @@
 import express from 'express';
+import Goal from '../models/Goal.js';
+
 const router = express.Router();
 
-let goals = [
-    { id: 1, name: "Meta 1", description: "Descripcion Meta 1", dueDate: "2026-05-15" }
-];
-
-router.get('/getGoals', (req, res) => {
-    res.status(200).json(goals);
+// CREATE
+router.post('/', async (req, res) => {
+    try {
+        const newGoal = new Goal(req.body);
+        const savedGoal = await newGoal.save();
+        res.status(201).json(savedGoal);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
 });
 
-router.post('/addGoal', (req, res) => {
-    const { name, description, dueDate } = req.body;
-
-    if (!name || !description || !dueDate) {
-        return res.status(400).json({ message: "Error: Faltan parámetros (name, description o dueDate)" });
+// READ
+router.get('/', async (req, res) => {
+    try {
+        const goals = await Goal.find();
+        res.json(goals);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
-
-    const newGoal = { id: Date.now(), name, description, dueDate };
-    goals.push(newGoal);
-    res.status(200).json(newGoal);
 });
 
-router.delete('/removeGoal', (req, res) => {
-    const { id } = req.body;
-
-    if (!id) {
-        return res.status(400).json({ message: "Error: Se requiere el ID para eliminar la meta" });
+// UPDATE
+router.put('/:id', async (req, res) => {
+    try {
+        const updatedGoal = await Goal.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        res.json(updatedGoal);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
     }
+});
 
-    goals = goals.filter(g => g.id !== id);
-    res.status(200).json({ message: "Elemento eliminado correctamente" });
+// DELETE
+router.delete('/:id', async (req, res) => {
+    try {
+        await Goal.findByIdAndDelete(req.params.id);
+        res.json({ message: 'Meta eliminada correctamente' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
 });
 
 export default router;

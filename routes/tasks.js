@@ -1,35 +1,47 @@
 import express from 'express';
+import Task from '../models/Task.js';
+
 const router = express.Router();
 
-let tasks = [
-    { id: 1, name: "Tarea 1", description: "Descripcion Tarea 1", dueDate: "2026-05-10" }
-];
-
-router.get('/getTasks', (req, res) => {
-    res.status(200).json(tasks);
+// CREATE
+router.post('/', async (req, res) => {
+    try {
+        const newTask = new Task(req.body);
+        const savedTask = await newTask.save();
+        res.status(201).json(savedTask);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
 });
 
-router.post('/addTask', (req, res) => {
-    const { name, description, dueDate } = req.body;
-
-    if (!name || !description || !dueDate) {
-        return res.status(400).json({ message: "Error: Faltan parámetros (name, description o dueDate)" });
+// READ
+router.get('/', async (req, res) => {
+    try {
+        const tasks = await Task.find();
+        res.json(tasks);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
-
-    const newTask = { id: Date.now(), name, description, dueDate };
-    tasks.push(newTask);
-    res.status(200).json(newTask); 
 });
 
-router.delete('/removeTask', (req, res) => {
-    const { id } = req.body;
-
-    if (!id) {
-        return res.status(400).json({ message: "Error: Se requiere el ID para eliminar la tarea" });
+// UPDATE
+router.put('/:id', async (req, res) => {
+    try {
+        const updatedTask = await Task.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        res.json(updatedTask);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
     }
+});
 
-    tasks = tasks.filter(t => t.id !== id);
-    res.status(200).json({ message: "Elemento eliminado correctamente" });
+// DELETE
+router.delete('/:id', async (req, res) => {
+    try {
+        await Task.findByIdAndDelete(req.params.id);
+        res.json({ message: 'Tarea eliminada correctamente' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
 });
 
 export default router;

@@ -1,23 +1,36 @@
-# To-Do List Backend (Unidad III)
+# To-Do List: API REST (Backend)
 
-Proyecto desarrollado con Node.js y Express para la gestión de tareas y metas.
+Proyecto backend desarrollado con Node.js y Express. Maneja la persistencia de datos de las tareas y metas a través de MongoDB Atlas.
 
-## Instalación y Ejecución
-1. Ejecutar `npm install`
-2. Iniciar el servidor con `npm start`
-3. El servidor correrá en `http://localhost:3000`
+## Tecnologías Utilizadas
+* Node.js & Express
+* MongoDB & Mongoose
+* Cors & Dotenv
+* Docker
 
 ## Seguridad
-Todos los endpoints requieren enviar este Header:
-`Authorization: Mau-777-Key`
+Authorization: Mau-777-Key
 
-## Endpoints
+## Endpoints Principales
 **Tareas:**
-- GET `/tasks/getTasks`
-- POST `/tasks/addTask`
-- DELETE `/tasks/removeTask`
+* GET /getTasks - Obtiene todas las tareas.
+* POST /addTask - Crea una nueva tarea (requiere title).
+* DELETE /removeTask - Elimina una tarea (requiere id en el body).
 
 **Metas:**
-- GET `/goals/getGoals`
-- POST `/goals/addGoal`
-- DELETE `/goals/removeGoal`
+* GET /getGoals - Obtiene todas las metas.
+* POST /addGoal - Crea una nueva meta (requiere title y deadline).
+* DELETE /removeGoal - Elimina una meta (requiere id en el body).
+
+## Instrucciones de Ejecución (Local)
+1. Ejecutar npm install para descargar las dependencias.
+2. Crear un archivo .env en la raíz con la variable MONGO_URI apuntando a tu cluster de Atlas.
+3. Iniciar el servidor:
+   npm start
+El servidor correrá en http://localhost:3000
+
+## Instrucciones de Ejecución (Docker)
+1. Construir la imagen:
+   docker build -t backend-todo .
+2. Levantar el contenedor:
+   docker run -p 3000:3000 backend-todo

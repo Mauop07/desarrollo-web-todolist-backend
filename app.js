@@ -26,8 +26,8 @@ app.use((req, res, next) => {
     }
 });
 
-app.use('/tasks', taskRoutes);
-app.use('/goals', goalRoutes);
+app.use('/', taskRoutes);
+app.use('/', goalRoutes);
 
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en http://localhost:${PORT}`);
